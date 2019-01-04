@@ -11,23 +11,28 @@ import { getFilmsFromApiWithSearchedText } from '../API/TMDBApi'
 class Search extends React.Component {
 
     // le constructeur de notre component à un paramètre props par défaut
+    // Afficher les films de l'API
     constructor(props) {
         super(props)
         // Ici on va créer les propriétés de notre component custom Search
         this.searchedText =  "" // Initialisation de notre donnée searchedText en dehors du state
         
-        this.state = { 
+        // state: on l'utilise car le tableau des films est modifé à chaque fois qu'on fait appel à l'API
+        this.state = { // le nom de cette propriété est fixe, vous ne pouvez la changer
             films: [],  // On initialise notre state avec une liste de film vide
             isLoading: false // Par défaut false car il n'y pas de chargement tant qu'on ne lance pas de recherche    
         }
     }
-    // Méthode , fonction au clique du bouton
+    // Méthode , fonction au clique du bouton. _ pour indiquer que c'est privé
     _loadFilms(){ 
             if (this.searchedText.length > 0 ) { // Seulement si le texte recherché n'est pas vide
                 this.setState({ isLoading: true }) // Lancement du chargement
+                // methode (fonction) importé de API/TMDBApi.js qui va chercher les réponses
                 getFilmsFromApiWithSearchedText(this.searchedText).then(data => {
-                    this.setState({
-                         films: data.results,
+                    // Pour modifier une donnée du state on passe toujours par setState
+
+                    this.setState({ 
+                         films: data.results, // les films sont stuqé dans un tableau result ()
                          isLoading: false // arret du chargement
                          }) 
             }) 
@@ -59,10 +64,11 @@ class Search extends React.Component {
                     onSubmitEditing= {() => this._loadFilms()} // props sur textinput qui autorise d'appyer sur le ok du clavier
                 /> 
                 <Button style={{ height: 50 }} title="Rechercher" onPress={() => this._loadFilms()}/>
+                {/* La liste des films */}
                 <FlatList
-                    data={this.state.films}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) => <FilmItem film={item}/>}
+                    data={this.state.films} // les données affichées = props films tableau vide
+                    keyExtractor={(item) => item.id.toString()} 
+                    renderItem={({item}) => <FilmItem film={item}/>} // 
                 />
             </View>
         )
